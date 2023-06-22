@@ -1,0 +1,223 @@
+-- phpMyAdmin SQL Dump
+-- version 4.9.2
+-- httpswww.phpmyadmin.net
+--
+-- Host 127.0.0.13306
+-- Tempo de geração 27-Out-2022 às 1747
+-- Versão do servidor 8.0.18
+-- versão do PHP 7.3.12
+
+SET SQL_MODE = NO_AUTO_VALUE_ON_ZERO;
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = +0000;
+
+
+!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT ;
+!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS ;
+!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION ;
+!40101 SET NAMES utf8mb4 ;
+
+--
+-- Banco de dados `banco_hotelaria2d2`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `cliente`
+--
+
+DROP TABLE IF EXISTS `cliente`;
+CREATE TABLE IF NOT EXISTS `cliente` (
+  `cod` int(11) UNSIGNED NOT NULL,
+  `Nome` varchar(80) NOT NULL,
+  `CPF` int(11) NOT NULL,
+  `Tipo_convenio` varchar(40) NOT NULL,
+  PRIMARY KEY (`cod`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Extraindo dados da tabela `cliente`
+--
+
+INSERT INTO `cliente` (`cod`, `Nome`, `CPF`, `Tipo_convenio`) VALUES
+(1, 'zezinho', 198256877, 'Bronze'),
+(2, 'kenzin', 112575899, 'Prata'),
+(3, 'Arthurzin', 117810686, 'Gold');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `hospede`
+--
+
+DROP TABLE IF EXISTS `hospede`;
+CREATE TABLE IF NOT EXISTS `hospede` (
+  `cod` int(10) UNSIGNED NOT NULL,
+  `nome` varchar(40) NOT NULL,
+  `fk_reserva_cod` int(10) UNSIGNED NOT NULL,
+  `telefone` char(15) NOT NULL,
+  `email` varchar(60) NOT NULL,
+  PRIMARY KEY (`cod`),
+  KEY `fkcliente_cod` (`fk_reserva_cod`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Extraindo dados da tabela `hospede`
+--
+
+INSERT INTO `hospede` (`cod`, `nome`, `fk_reserva_cod`, `telefone`, `email`) VALUES
+(1, 'Arhur', 1, '319999999', 'zezinho@gmail.com'),
+(2, 'Victor ', 2, '31984290938', 'victoralecrim11@gmail.com'),
+(3, 'Joao', 3, '3125498710', 'joaozinho@gmail.com');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `quarto`
+--
+
+DROP TABLE IF EXISTS `quarto`;
+CREATE TABLE IF NOT EXISTS `quarto` (
+  `cod` int(10) UNSIGNED NOT NULL,
+  `numero` int(11) NOT NULL,
+  `andar` int(11) NOT NULL,
+  `classificacao` varchar(40) NOT NULL,
+  `fk_hospede_cod` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`cod`),
+  KEY `fk_hospede_cod` (`fk_hospede_cod`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Extraindo dados da tabela `quarto`
+--
+
+INSERT INTO `quarto` (`cod`, `numero`, `andar`, `classificacao`, `fk_hospede_cod`) VALUES
+(1, 201, 4, 'premium', 1),
+(2, 202, 4, 'gold', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `reserva`
+--
+
+DROP TABLE IF EXISTS `reserva`;
+CREATE TABLE IF NOT EXISTS `reserva` (
+  `cod` int(10) UNSIGNED NOT NULL,
+  `Data_inicio` date NOT NULL,
+  `Data_Fim` date NOT NULL,
+  `quarto` int(11) NOT NULL,
+  `valor` float(9,2) NOT NULL,
+  `fk_cod_cliente` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`cod`),
+  KEY `fk_cod_cliente` (`fk_cod_cliente`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `servico_copa`
+--
+
+DROP TABLE IF EXISTS `servico_copa`;
+CREATE TABLE IF NOT EXISTS `servico_copa` (
+  `cod` int(10) UNSIGNED NOT NULL,
+  `registro` varchar(100) NOT NULL,
+  `tipo_serviço` varchar(40) NOT NULL,
+  PRIMARY KEY (`cod`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Extraindo dados da tabela `servico_copa`
+--
+
+INSERT INTO `servico_copa` (`cod`, `registro`, `tipo_serviço`) VALUES
+(1, 'Limpeza', 'Quarto'),
+(2, 'Alimentacao', 'Café da manhã');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `serviços`
+--
+
+DROP TABLE IF EXISTS `serviços`;
+CREATE TABLE IF NOT EXISTS `serviços` (
+  `cod` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `itens` varchar(50) NOT NULL,
+  `tipo` varchar(50) NOT NULL,
+  `fk_quarto_cod` int(10) UNSIGNED NOT NULL,
+  `fk_servicocopa_cod` int(10) UNSIGNED NOT NULL,
+  `observacao` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`cod`),
+  KEY `fk_servico_copa` (`fk_servicocopa_cod`),
+  KEY `fk_quarto_cod` (`fk_quarto_cod`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Extraindo dados da tabela `serviços`
+--
+
+INSERT INTO `serviços` (`cod`, `itens`, `tipo`, `fk_quarto_cod`, `fk_servicocopa_cod`, `observacao`) VALUES
+(1, 'perciana', 'mobilha', 2, 1, 'em processo'),
+(2, 'vassoura', 'Limpeza', 1, 1, 'Em processo'),
+(3, 'Rodo', 'Limpeza', 2, 1, 'Em processo '),
+(4, 'HAMBURGUER', 'Alimento ', 1, 2, 'Entregue ');
+
+--
+-- Restrições para despejos de tabelas
+--
+
+--
+-- Limitadores para a tabela `hospede`
+--
+ALTER TABLE `hospede`
+  ADD CONSTRAINT `fkcliente_cod` FOREIGN KEY (`fk_reserva_cod`) REFERENCES `cliente` (`cod`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Limitadores para a tabela `quarto`
+--
+ALTER TABLE `quarto`
+  ADD CONSTRAINT `fk_hospede_cod` FOREIGN KEY (`fk_hospede_cod`) REFERENCES `hospede` (`cod`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Limitadores para a tabela `reserva`
+--
+ALTER TABLE `reserva`
+  ADD CONSTRAINT `fk_cod_cliente` FOREIGN KEY (`fk_cod_cliente`) REFERENCES `cliente` (`cod`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Limitadores para a tabela `serviços`
+--
+ALTER TABLE `serviços`
+  ADD CONSTRAINT `fk_quarto_cod` FOREIGN KEY (`fk_quarto_cod`) REFERENCES `quarto` (`cod`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_servico_copa` FOREIGN KEY (`fk_servicocopa_cod`) REFERENCES `servico_copa` (`cod`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+COMMIT;
+
+!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT ;
+!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS ;
+!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION ;
+
+
+ 1 - Apagar todos as reservas com valor maior que 100,00
+Delete from reserva where valor  100;
+ 2 - Apagar  todos hospedes 
+DELETE FROM hospede;
+ 3 - Atualizar o valor das reservas para 100,00 onde a data for igual a data de hoje.
+Update reserva set valor = 100 where Data_inicio = 2021-05-08;
+ 4 - Selecionar todas reservas feitas entre maio e junho de 2018 
+Select  from reserva where Data_inicio between 2018-05-01 and 2018-06-01;
+ 5 - Quantos clientes existem
+Select  count(cod) from cliente;-- Nome da tabela
+ 6 - Quantos quartos existem no andar de número 2.
+Select count(cod) from quarto where andar = 2;
+ 7 - Qual a média de valor das reservas.
+ Select AVG(valor) from reserva;
+ 8 - Selecionar o nome e CPF dos clientes.
+Select Nome , CPF from cliente;
+ 9 - Selecionar todos serviços do tipo “almoço”
+Select  from serviços where tipo = almoço;
+ 10 - Qual o somatório de valor de reservas realizadas
+Select sum(valor) from reserva;
